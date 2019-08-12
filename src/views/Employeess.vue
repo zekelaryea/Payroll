@@ -1,16 +1,20 @@
 <template>
-  <div class="about">
-    <h1>All Employees</h1>
-    <div class="space"></div>
+  <div>
 
+      <!-- <a href="javascript:;" @click="showModal()">Pay</a> -->
+      <div class="space"></div>
+      <div class="center">
+        <a-button type="primary" @click="showModal()">Pay</a-button>
+      </div>
+      <div class="space"></div>
+
+
+    
     <a-table :columns="columns" :dataSource="data" :rowSelection="rowSelection" @change="onChange">
-      <!-- <span slot="action" slot-scope="text, record"> -->
-      <!-- <a href="javascript:;" @click="showModal(record.lastname)">Pay 一 {{record.lastname}}</a> -->
-    <!-- </span> -->
 
-    </a-table>
+  </a-table>
 
-    <a-modal
+  <a-modal
       :title="pay"
       :visible="visible"
       @ok="handleOk"
@@ -38,16 +42,15 @@
 
   </div>
 
-
 </template>
 
 <style type="text/css" scoped>
-  .space{
-    height: 50px;
-  }
-  h1{
+  .center{
     display: block;
     text-align: center;
+  }
+  .space{
+    height: 20px;
   }
 </style>
 
@@ -57,7 +60,6 @@ const columns = [
   title: 'ID',
   dataIndex: 'key',
   key: 'key',
-  sorter: (a, b) => a.age - b.age,
 },{
   title: 'Last Name',
   dataIndex: 'lastname',
@@ -86,7 +88,6 @@ const columns = [
   title: 'Age',
   dataIndex: 'age',
   key: 'age',
-  sorter: (a, b) => a.age - b.age,
 }, {
   title: 'Birth Place',
   dataIndex: 'birthplace',
@@ -96,17 +97,6 @@ const columns = [
   title: 'Address',
   dataIndex: 'address',
   key: 'address',
-
-  filters: [{
-    text: 'London',
-    value: 'London',
-  }, {
-    text: 'New York',
-    value: 'New York',
-  }],
-  filterMultiple: false,
-  onFilter: (value, record) => record.address.indexOf(value) === 0,
-  sorter: (a, b) => a.address.length - b.address.length,
 }, {
   title: 'Contact No',
   dataIndex: 'contactno',
@@ -127,14 +117,9 @@ const columns = [
   dataIndex: 'status',
   key: 'status',
   
-}, {
-  title: 'Action',
-  key: 'action',
-  scopedSlots: { customRender: 'action' },
-}
+},
 
 ];
-
 
 
 const data = [{
@@ -208,16 +193,12 @@ const rowSelection = {
   },
 };
 
-function onChange(pagination, filters, sorter) {
-  console.log('params', pagination, filters, sorter);
-}
-
-
 export default {
   data() {
     return {
       data,
       columns,
+      rowSelection,
       ModalText: 'Content of the modal',
       visible: false,
       confirmLoading: false,
@@ -225,10 +206,10 @@ export default {
     }
   },
   methods: {
-    onChange,
-    showModal(lastname) {
+    // onChange,
+    showModal() {
       this.visible = true
-      this.pay = "Pay " + lastname;
+      this.pay = "Pay";
     },
     handleOk(e) {
       this.ModalText = 'The modal will be closed after two seconds';
