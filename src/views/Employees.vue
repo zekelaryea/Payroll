@@ -1,27 +1,23 @@
 <template>
-  <div>
+  <div class="about">
+    <h1>All Employees</h1>
+    <div class="space"></div>
 
-      <!-- <a href="javascript:;" @click="showModal()">Pay</a> -->
-      <div class="space"></div>
-      <div class="center">
-        <a-button type="primary" @click="showModal()">Pay</a-button>
-      </div>
-      <div class="space"></div>
-
-
-    
     <a-table :columns="columns" :dataSource="data" :rowSelection="rowSelection" @change="onChange">
+      <!-- <span slot="action" slot-scope="text, record"> -->
+      <!-- <a href="javascript:;" @click="showModal(record.lastname)">Pay 一 {{record.lastname}}</a> -->
+    <!-- </span> -->
 
-  </a-table>
+    </a-table>
 
-  <a-modal
+    <a-modal
       :title="pay"
       :visible="visible"
       @ok="handleOk"
       :confirmLoading="confirmLoading"
       @cancel="handleCancel"
     >
-      
+      <p></p>
 
       <a-form-item
         v-bind="formItemLayout"
@@ -37,36 +33,21 @@
         />
       </a-form-item>
 
-      <a-form-item
-        v-bind="formItemLayout"
-        label="Dummy Field"
-      >
-        <a-input
-          v-decorator="[
-            'amount',
-            {
-              rules: [{ required: true, message: 'Please provide input!', whitespace: true }]
-            }
-          ]"
-        />
-      </a-form-item>
-
-      <p>{{selectionCount}} employee(s) selected</p>
-
 
     </a-modal>
 
   </div>
 
+
 </template>
 
 <style type="text/css" scoped>
-  .center{
+  .space{
+    height: 50px;
+  }
+  h1{
     display: block;
     text-align: center;
-  }
-  .space{
-    height: 20px;
   }
 </style>
 
@@ -76,6 +57,7 @@ const columns = [
   title: 'ID',
   dataIndex: 'key',
   key: 'key',
+  sorter: (a, b) => a.age - b.age,
 },{
   title: 'Last Name',
   dataIndex: 'lastname',
@@ -104,6 +86,7 @@ const columns = [
   title: 'Age',
   dataIndex: 'age',
   key: 'age',
+  sorter: (a, b) => a.age - b.age,
 }, {
   title: 'Birth Place',
   dataIndex: 'birthplace',
@@ -113,6 +96,17 @@ const columns = [
   title: 'Address',
   dataIndex: 'address',
   key: 'address',
+
+  filters: [{
+    text: 'London',
+    value: 'London',
+  }, {
+    text: 'New York',
+    value: 'New York',
+  }],
+  filterMultiple: false,
+  onFilter: (value, record) => record.address.indexOf(value) === 0,
+  sorter: (a, b) => a.address.length - b.address.length,
 }, {
   title: 'Contact No',
   dataIndex: 'contactno',
@@ -133,9 +127,14 @@ const columns = [
   dataIndex: 'status',
   key: 'status',
   
-},
+}, {
+  title: 'Action',
+  key: 'action',
+  scopedSlots: { customRender: 'action' },
+}
 
 ];
+
 
 
 const data = [{
@@ -197,50 +196,39 @@ const data = [{
   status: 'active',
 }];
 
-var selectionCount = 0;
-
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
-    selectionCount = selectedRows.length;
-    this.selectionCount = selectionCount;
-    console.log("Count of selection: " + selectionCount);
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   },
   onSelect: (record, selected, selectedRows) => {
-    selectionCount = selectedRows.length;
-    this.selectionCount = selectionCount;
-
-    console.log("Count of selection: " + selectionCount);
     console.log(record, selected, selectedRows);
   },
   onSelectAll: (selected, selectedRows, changeRows) => {
-    selectionCount = selectedRows.length;
-    this.selectionCount = selectionCount;
-
-    console.log("Count of selection: " + selectionCount);
     console.log(selected, selectedRows, changeRows);
   },
 };
+
+function onChange(pagination, filters, sorter) {
+  console.log('params', pagination, filters, sorter);
+}
+
 
 export default {
   data() {
     return {
       data,
       columns,
-      rowSelection,
       ModalText: 'Content of the modal',
       visible: false,
       confirmLoading: false,
       pay: '',
-      selectionCount,
     }
   },
   methods: {
-    // onChange,
-    showModal() {
+    onChange,
+    showModal(lastname) {
       this.visible = true
-      this.pay = "Pay";
-      this.selectionCount = selectionCount;
+      this.pay = "Pay " + lastname;
     },
     handleOk(e) {
       this.ModalText = 'The modal will be closed after two seconds';
